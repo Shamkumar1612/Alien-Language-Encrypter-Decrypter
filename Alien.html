@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alien Glyph Encryptor/Decryptor</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #000, #121212);
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 0 30px rgba(0, 255, 170, 0.2);
+            margin-top: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        h1 {
+            color: #00ffaa;
+            font-size: 2.5rem;
+            margin-bottom: 0;
+        }
+        
+        .subtitle {
+            color: #7d7d7d;
+            font-style: italic;
+        }
+        
+        .tab-container {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            background-color: #1a1a1a;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid #333;
+        }
+        
+        .tab:first-child {
+            border-radius: 8px 0 0 8px;
+        }
+        
+        .tab:last-child {
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .tab.active {
+            background-color: #00ffaa;
+            color: #000;
+            font-weight: bold;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 150px;
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #e0e0e0;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 16px;
+            resize: vertical;
+        }
+        
+        button {
+            background: linear-gradient(90deg, #00ffaa, #00ccff);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 0 auto 15px auto;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 170, 0.4);
+        }
+        
+        .options {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .option {
+            margin: 0 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .option label {
+            margin-left: 5px;
+            cursor: pointer;
+        }
+        
+        .output {
+            margin-top: 20px;
+            background-color: #1a1a1a;
+            border-radius: 8px;
+            padding: 15px;
+            min-height: 100px;
+            border: 1px solid #333;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+        
+        .output-title {
+            color: #00ffaa;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .dictionary-container {
+            margin-top: 30px;
+        }
+        
+        .dictionary-title {
+            color: #00ffaa;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .dictionary-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .dictionary-tab {
+            padding: 8px 20px;
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            cursor: pointer;
+        }
+        
+        .dictionary-tab:first-child {
+            border-radius: 8px 0 0 8px;
+        }
+        
+        .dictionary-tab:last-child {
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .dictionary-tab.active {
+            background-color: #00ffaa;
+            color: #000;
+        }
+        
+        .dictionary-content {
+            display: none;
+        }
+        
+        .dictionary-content.active {
+            display: block;
+        }
+        
+        .word-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .word-item {
+            background-color: #1a1a1a;
+            padding: 8px 15px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            border: 1px solid #333;
+        }
+        
+        .word {
+            margin-right: 10px;
+        }
+        
+        .glyph {
+            font-size: 20px;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .dictionary-tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .dictionary-tab {
+                width: 80%;
+                text-align: center;
+                margin-bottom: 5px;
+                border-radius: 8px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>👽 Alien Glyph Encryptor/Decryptor</h1>
+            <p class="subtitle">Communicate in cosmic code with alien glyphs</p>
+        </header>
+        
+        <div class="tab-container">
+            <div class="tab active" data-tab="encrypt">🔐 Encrypt</div>
+            <div class="tab" data-tab="decrypt">🔓 Decrypt</div>
+            <div class="tab" data-tab="dictionary">📚 Dictionary</div>
+        </div>
+        
+        <div class="tab-content active" id="encrypt-tab">
+            <textarea id="encrypt-input" placeholder="Type your message here to encrypt into alien glyphs..."></textarea>
+            
+            <div class="options">
+                <div class="option">
+                    <input type="radio" id="word-mode" name="encrypt-mode" value="word" checked>
+                    <label for="word-mode">Word Mode</label>
+                </div>
+                <div class="option">
+                    <input type="radio" id="character-mode" name="encrypt-mode" value="character">
+                    <label for="character-mode">Character Mode</label>
+                </div>
+                <div class="option">
+                    <input type="radio" id="hybrid-mode" name="encrypt-mode" value="hybrid">
+                    <label for="hybrid-mode">Hybrid Mode</label>
+                </div>
+            </div>
+            
+            <button id="encrypt-btn">🔮 Encrypt to Alien Glyphs</button>
+            <div class="output">
+                <div class="output-title">Encrypted Message:</div>
+                <div id="encrypt-output"></div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="decrypt-tab">
+            <textarea id="decrypt-input" placeholder="Paste alien glyphs here to decrypt..."></textarea>
+            
+            <div class="options">
+                <div class="option">
+                    <input type="radio" id="word-mode-decrypt" name="decrypt-mode" value="word" checked>
+                    <label for="word-mode-decrypt">Word Mode</label>
+                </div>
+                <div class="option">
+                    <input type="radio" id="character-mode-decrypt" name="decrypt-mode" value="character">
+                    <label for="character-mode-decrypt">Character Mode</label>
+                </div>
+                <div class="option">
+                    <input type="radio" id="auto-detect-mode" name="decrypt-mode" value="auto">
+                    <label for="auto-detect-mode">Auto Detect</label>
+                </div>
+            </div>
+            
+            <button id="decrypt-btn">🔍 Decrypt to Human Language</button>
+            <div class="output">
+                <div class="output-title">Decrypted Message:</div>
+                <div id="decrypt-output"></div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="dictionary-tab">
+            <div class="dictionary-title">📚 Alien Glyph Dictionary</div>
+            
+            <div class="dictionary-tabs">
+                <div class="dictionary-tab active" data-dict="word">Word Dictionary</div>
+                <div class="dictionary-tab" data-dict="character">Character Dictionary</div>
+            </div>
+            
+            <div class="dictionary-content active" id="word-dictionary">
+                <div class="word-list" id="word-dictionary-list">
+                    <!-- Word dictionary items will be generated here -->
+                </div>
+            </div>
+            
+            <div class="dictionary-content" id="character-dictionary">
+                <div class="word-list" id="character-dictionary-list">
+                    <!-- Character dictionary items will be generated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Alien Dictionary with word-to-glyph mappings
+        const alienDictionary = {
+            "meet": "🛕",
+            "me": "🌒",
+            "at": "🪐",
+            "night": "🌌",
+            "friend": "👽",
+            "secret": "🔮",
+            "space": "🚀",
+            "yes": "✅",
+            "no": "❌",
+            "hello": "🌠",
+            "goodbye": "🌀",
+            "planet": "🌍",
+            "star": "⭐",
+            "ship": "🛸",
+            "moon": "🌙",
+            "sun": "☀️",
+            "help": "🆘",
+            "danger": "⚠️",
+            "safe": "🛡️",
+            "time": "⏰",
+            "soon": "🔜",
+            "later": "⏳",
+            "now": "⚡",
+            "food": "🍽️",
+            "water": "💧",
+            "air": "💨",
+            "earth": "🌱",
+            "fire": "🔥",
+            "love": "❤️",
+            "hate": "💔",
+            "see": "👁️",
+            "hear": "👂",
+            "speak": "🗣️",
+            "think": "🧠",
+            "know": "💡",
+            "hide": "🙈",
+            "find": "🔍",
+            "go": "➡️",
+            "stop": "🛑",
+            "come": "⬅️",
+            "run": "🏃",
+            "walk": "🚶",
+            "fly": "✈️",
+            "swim": "🏊",
+            "big": "📏",
+            "small": "🔬",
+            "hot": "🔥",
+            "cold": "❄️",
+            "good": "👍",
+            "bad": "👎",
+            "happy": "😀",
+            "sad": "😢",
+            "fast": "⚡",
+            "slow": "🐢",
+            "light": "💡",
+            "dark": "🌑",
+            "day": "☀️",
+            "today": "📅",
+            "tomorrow": "📆",
+            "yesterday": "⏪",
+            "week": "📅",
+            "month": "🗓️",
+            "year": "🎆",
+            "human": "👤",
+            "alien": "👾",
+            "galaxy": "🌌",
+            "universe": "🔭",
+            "weapon": "🔫",
+            "peace": "☮️",
+            "war": "⚔️"
+        };
+        
+        // Character-to-glyph mappings for individual letters and numbers
+        // Using alien-like symbols that are widely supported across devices
+        const characterDictionary = {
+            "a": "Ꙫ",
+            "b": "Ꞛ",
+            "c": "Ꮛ",
+            "d": "Ꮄ",
+            "e": "Ꮦ",
+            "f": "Ꮎ",
+            "g": "Ꙭ",
+            "h": "Ꙩ",
+            "i": "Ꭵ",
+            "j": "Ꮰ",
+            "k": "Ꙕ",
+            "l": "Ꮭ",
+            "m": "Ꮇ",
+            "n": "Ꮑ",
+            "o": "Ꮻ",
+            "p": "Ꮅ",
+            "q": "Ꝕ",
+            "r": "Ꮢ",
+            "s": "Ꚃ",
+            "t": "Ꮏ",
+            "u": "Ꮜ",
+            "v": "Ꮙ",
+            "w": "Ꮗ",
+            "x": "Ꮮ",
+            "y": "Ꭹ",
+            "z": "Ꮓ",
+            "0": "⌬",
+            "1": "⌭",
+            "2": "⌮",
+            "3": "⌯",
+            "4": "⌰",
+            "5": "⌱",
+            "6": "⌲",
+            "7": "⌳",
+            "8": "⌴",
+            "9": "⌵",
+            " ": "⎔",
+            ".": "◈",
+            ",": "◇",
+            "!": "⁂",
+            "?": "⌘",
+            ":": "⌂",
+            ";": "⊙",
+            "-": "≈",
+            "_": "∞"
+        };
+        
+        // Create reverse dictionaries for decryption
+        const reverseWordDictionary = {};
+        for (const word in alienDictionary) {
+            reverseWordDictionary[alienDictionary[word]] = word;
+        }
+        
+        const reverseCharDictionary = {};
+        for (const char in characterDictionary) {
+            reverseCharDictionary[characterDictionary[char]] = char;
+        }
+        
+        // Tab switching functionality
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                
+                tab.classList.add('active');
+                const tabId = tab.getAttribute('data-tab');
+                document.getElementById(`${tabId}-tab`).classList.add('active');
+            });
+        });
+        
+        // Dictionary tab switching
+        document.querySelectorAll('.dictionary-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.dictionary-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.dictionary-content').forEach(content => content.classList.remove('active'));
+                
+                tab.classList.add('active');
+                const dictId = tab.getAttribute('data-dict');
+                document.getElementById(`${dictId}-dictionary`).classList.add('active');
+            });
+        });
+        
+        // Encryption functions
+        function encryptWord(word) {
+            const cleanWord = word.replace(/[^\w\s]/g, '').toLowerCase();
+            return alienDictionary[cleanWord] || word;
+        }
+        
+        function encryptCharacter(char) {
+            return characterDictionary[char.toLowerCase()] || char;
+        }
+        
+        // Word-based encryption
+        function wordEncryption(input) {
+            const words = input.split(/\s+/);
+            return words.map(word => encryptWord(word)).join(' ');
+        }
+        
+        // Character-based encryption
+        function characterEncryption(input) {
+            return Array.from(input).map(char => encryptCharacter(char)).join('');
+        }
+        
+        // Hybrid encryption (words if found in dictionary, otherwise characters)
+        function hybridEncryption(input) {
+            const words = input.split(/\s+/);
+            
+            return words.map(word => {
+                const cleanWord = word.replace(/[^\w\s]/g, '').toLowerCase();
+                
+                // If word exists in dictionary, use word encryption
+                if (alienDictionary[cleanWord]) {
+                    // Preserve punctuation
+                    const punctuation = word.match(/[^\w\s]$/);
+                    return alienDictionary[cleanWord] + (punctuation ? punctuation[0] : '');
+                } else {
+                    // Otherwise encrypt each character
+                    return Array.from(word).map(char => encryptCharacter(char)).join('');
+                }
+            }).join(characterDictionary[' ']); // Use the space character from character dictionary
+        }
+        
+        // Decryption functions
+        function wordDecryption(input) {
+            const glyphs = input.split(/\s+/);
+            return glyphs.map(glyph => reverseWordDictionary[glyph] || glyph).join(' ');
+        }
+        
+        function characterDecryption(input) {
+            return Array.from(input).map(char => reverseCharDictionary[char] || char).join('');
+        }
+        
+        // Auto-detect decryption (tries to detect if it's word or character encryption)
+        function autoDetectDecryption(input) {
+            // Check if it contains any character from our character dictionary
+            const hasCharEncryption = Array.from(input).some(char => 
+                Object.values(characterDictionary).includes(char));
+            
+            if (hasCharEncryption) {
+                return characterDecryption(input);
+            }
+            
+            // Try word-based decryption with space delimiter
+            const wordResult = wordDecryption(input);
+            
+            // If more than 50% of the words were successfully decrypted, assume word encryption
+            const originalWords = input.split(/\s+/);
+            const decryptedWords = wordResult.split(/\s+/);
+            let successfulDecryptions = 0;
+            
+            for (let i = 0; i < Math.min(originalWords.length, decryptedWords.length); i++) {
+                if (originalWords[i] !== decryptedWords[i]) {
+                    successfulDecryptions++;
+                }
+            }
+            
+            // If more than 30% success rate, use word decryption
+            if (successfulDecryptions / originalWords.length > 0.3) {
+                return wordResult;
+            }
+            
+            // Default to character decryption
+            return characterDecryption(input);
+        }
+        
+        // Encrypt button functionality
+        document.getElementById('encrypt-btn').addEventListener('click', () => {
+            const input = document.getElementById('encrypt-input').value;
+            const mode = document.querySelector('input[name="encrypt-mode"]:checked').value;
+            let result = '';
+            
+            if (mode === 'word') {
+                result = wordEncryption(input);
+            } else if (mode === 'character') {
+                result = characterEncryption(input);
+            } else if (mode === 'hybrid') {
+                result = hybridEncryption(input);
+            }
+            
+            document.getElementById('encrypt-output').textContent = result;
+        });
+        
+        // Decrypt button functionality
+        document.getElementById('decrypt-btn').addEventListener('click', () => {
+            const input = document.getElementById('decrypt-input').value;
+            const mode = document.querySelector('input[name="decrypt-mode"]:checked').value;
+            let result = '';
+            
+            if (mode === 'word') {
+                result = wordDecryption(input);
+            } else if (mode === 'character') {
+                result = characterDecryption(input);
+            } else if (mode === 'auto') {
+                result = autoDetectDecryption(input);
+            }
+            
+            document.getElementById('decrypt-output').textContent = result;
+        });
+        
+        // Populate word dictionary tab
+        const wordDictionaryList = document.getElementById('word-dictionary-list');
+        for (const word in alienDictionary) {
+            const wordItem = document.createElement('div');
+            wordItem.className = 'word-item';
+            
+            const wordSpan = document.createElement('span');
+            wordSpan.className = 'word';
+            wordSpan.textContent = word;
+            
+            const glyphSpan = document.createElement('span');
+            glyphSpan.className = 'glyph';
+            glyphSpan.textContent = alienDictionary[word];
+            
+            wordItem.appendChild(wordSpan);
+            wordItem.appendChild(glyphSpan);
+            wordDictionaryList.appendChild(wordItem);
+        }
+        
+        // Populate character dictionary tab
+        const charDictionaryList = document.getElementById('character-dictionary-list');
+        for (const char in characterDictionary) {
+            const charItem = document.createElement('div');
+            charItem.className = 'word-item';
+            
+            const charSpan = document.createElement('span');
+            charSpan.className = 'word';
+            charSpan.textContent = char === ' ' ? '[space]' : char;
+            
+            const glyphSpan = document.createElement('span');
+            glyphSpan.className = 'glyph';
+            glyphSpan.textContent = characterDictionary[char];
+            
+            charItem.appendChild(charSpan);
+            charItem.appendChild(glyphSpan);
+            charDictionaryList.appendChild(charItem);
+        }
+    </script>
+</body>
+</html>
